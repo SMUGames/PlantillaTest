@@ -2,9 +2,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Controller_Player : MonoBehaviour
 {
+    private Vector3 spawnPoint;
+
     public float speed = 5;
 
     private Rigidbody rb;
@@ -68,45 +71,44 @@ public class Controller_Player : MonoBehaviour
         laserOn = false;
         forceField = false;
         //options = new List<Controller_Option>();
+        spawnPoint = transform.position;
     }
 
     private void Update()
     {
+        ResetPlayerPosition();
         CheckForceField();
         ActionInput();
+        CheckUpgrade();
+        //CheckPowerUpCollection();
     }
+
+    // private void CheckPowerUpCollection() 
+    // { }
+
+    private void ResetPlayerPosition()
+    { if (Input.GetKey(KeyCode.R))
+        { transform.position = spawnPoint; SceneManager.LoadScene(1); } }
+
+    private void CheckUpgrade()
+    { if (powerUpCount == 1) { speed += 5; } }
 
     private void CheckForceField()
-    {
-        if (forceField)
-        {
-            render.material.color = Color.blue;
-        }
-        else
-        {
-            render.material.color = Color.red;
-        }
-    }
+    { if (forceField) { render.material.color = Color.blue; }
+      else { render.material.color = Color.red; } }
 
-    public virtual void FixedUpdate()
-    {
-        Movement();
-    }
+    public virtual void FixedUpdate() { Movement(); }
 
     public virtual void ActionInput()
     {
         missileCount -= Time.deltaTime;
         shootingCount -= Time.deltaTime;
-        if (Input.GetKey(KeyCode.O) && shootingCount < 0)
+        if (Input.GetKey(KeyCode.Space) && shootingCount < 0)
         {
-            if (OnShooting != null)
-            {
-                OnShooting();
-            }
+            if (OnShooting != null) { OnShooting(); }
 
 
             Instantiate(projectile, new Vector3(transform.position.x, transform.position.y, transform.position.z), Quaternion.identity);
-
 
             shootingCount = 0.1f;
         }

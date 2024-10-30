@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Proyectil
   - Wall
+  - SpeedUp
   layers:
   - Default
   - TransparentFX
